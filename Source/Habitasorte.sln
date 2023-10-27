@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Habitasorte", "Habitasorte.csproj", "{7D549D1D-8ECF-4758-8691-34EFC84F62E8}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "HabitaSorte_CasaNova_2.2", "..\HabitaSorte_CasaNova_2.2\HabitaSorte_CasaNova_2.2.vdproj", "{A89C276E-2426-42E8-8DD2-A18304997B94}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Instalacao_HabitaSorte_CasaNova_3.0", "..\Instalacao_HabitaSorte_CasaNova_3.0\Instalacao_HabitaSorte_CasaNova_3.0.vdproj", "{CF90F723-1495-49F5-8267-1932897B4FA2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7D549D1D-8ECF-4758-8691-34EFC84F62E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D549D1D-8ECF-4758-8691-34EFC84F62E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D549D1D-8ECF-4758-8691-34EFC84F62E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D549D1D-8ECF-4758-8691-34EFC84F62E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A89C276E-2426-42E8-8DD2-A18304997B94}.Debug|Any CPU.ActiveCfg = Debug
+		{A89C276E-2426-42E8-8DD2-A18304997B94}.Release|Any CPU.ActiveCfg = Release
+		{CF90F723-1495-49F5-8267-1932897B4FA2}.Debug|Any CPU.ActiveCfg = Debug
+		{CF90F723-1495-49F5-8267-1932897B4FA2}.Release|Any CPU.ActiveCfg = Release
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
