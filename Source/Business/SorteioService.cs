@@ -171,7 +171,7 @@ namespace Habitasorte.Business {
                     }
                 }
             });
-            //VER
+            
             if (listaSorteada != null)
             {
                 diretorioListas = System.Configuration.ConfigurationManager.AppSettings.Get("PASTA_RESULTADO");
@@ -183,7 +183,13 @@ namespace Habitasorte.Business {
                 {
                     Directory.CreateDirectory(diretorioListas);
                 }
-                SalvarLista(listaSorteada, (String.Concat(diretorioListas, listaSorteada.Nome.Split('%')[0], ".pdf")));
+                if (listaSorteada != null)
+                {
+                    SalvarLista(listaSorteada, (String.Concat(diretorioListas, listaSorteada.OrdemSorteio.ToString("00"), " - ", listaSorteada.Nome.Split('%')[0], ".pdf")));
+                } else
+                {
+                    SalvarLista(model.ProximaLista, (String.Concat(diretorioListas, model.ProximaLista.OrdemSorteio.ToString("00"), " - ", model.ProximaLista.Nome.Split('%')[0], ".pdf")));
+                }
             }
             return listaSorteada != null;
         }

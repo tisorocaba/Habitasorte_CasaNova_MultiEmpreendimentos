@@ -141,7 +141,7 @@ namespace Habitasorte.Business
             }
         }
 
-        private int ExecuteScalar<T>(string commandText, params SQLiteParameter[] parameters)
+        private int ExecuteScalar(string commandText, params SQLiteParameter[] parameters)
         {
             using (SQLiteCommand command = CreateCommand(commandText, parameters))
             {
@@ -156,6 +156,15 @@ namespace Habitasorte.Business
                 command.Parameters.AddWithValue("@NOME", nome);
                 return command.ExecuteScalar() as string;
             }
+        }
+        public void AtualizarListaSorteada(Lista lista, Action<string> updateStatus)
+        {
+            bool sorteada = true;
+            ExecuteNonQuery("UPDATE LISTA SET SORTEADA = @SORTEADA WHERE ID_LISTA = @ID_LISTA",
+                new SQLiteParameter("ID_LISTA", lista.IdLista) { DbType = DbType.Int32 },
+                new SQLiteParameter("SORTEADA", sorteada) { DbType = DbType.Boolean }
+            );
+            updateStatus("Sorteio Lista " + lista.OrdemSorteio.ToString("00") + " - " + lista.Nome + " finalizado!");
         }
 
         private void AtualizarParametro(string nome, string valor)
@@ -211,18 +220,18 @@ namespace Habitasorte.Business
 
         public void AtualizarSorteio(Sorteio sorteio)
         {
-            string nomeSorteio = String.Concat("Programa Habitacional Casa Nova - SORTEIO ", DateTime.Now.ToString("MMMM/yyyy"));
+            string nomeSorteio = String.Concat("SORTEIO ", DateTime.Now.ToString("MMMM/yyyy").ToUpper());
             AtualizarParametro("NOME_SORTEIO", nomeSorteio);
             AtualizarParametro("FAIXA_A", sorteio.FaixaA);
             AtualizarParametro("FAIXA_B", sorteio.FaixaAAtivo ? sorteio.FaixaB : null);
             AtualizarParametro("FAIXA_C", sorteio.FaixaBAtivo ? sorteio.FaixaC : null);
             AtualizarParametro("FAIXA_D", sorteio.FaixaCAtivo ? sorteio.FaixaD : null);
             AtualizarParametro("EMPREENDIMENTO_1", sorteio.Empreendimento1);
-            AtualizarParametro("EMPREENDIMENTO_2", sorteio.Empreendimento2Ativo ? sorteio.Empreendimento2 : null);
-            AtualizarParametro("EMPREENDIMENTO_3", sorteio.Empreendimento3Ativo ? sorteio.Empreendimento3 : null);
-            AtualizarParametro("EMPREENDIMENTO_4", sorteio.Empreendimento4Ativo ? sorteio.Empreendimento4 : null);
-            AtualizarParametro("EMPREENDIMENTO_5", sorteio.Empreendimento5Ativo ? sorteio.Empreendimento5 : null);
-            AtualizarParametro("EMPREENDIMENTO_6", sorteio.Empreendimento6Ativo ? sorteio.Empreendimento6 : null);
+            AtualizarParametro("EMPREENDIMENTO_2", sorteio.Empreendimento2Ativo && sorteio.Empreendimento2.Length > 0 ? sorteio.Empreendimento2 : null);
+            AtualizarParametro("EMPREENDIMENTO_3", sorteio.Empreendimento3Ativo && sorteio.Empreendimento3.Length > 0 ? sorteio.Empreendimento3 : null);
+            AtualizarParametro("EMPREENDIMENTO_4", sorteio.Empreendimento4Ativo && sorteio.Empreendimento4.Length > 0 ? sorteio.Empreendimento4 : null);
+            AtualizarParametro("EMPREENDIMENTO_5", sorteio.Empreendimento5Ativo && sorteio.Empreendimento5.Length > 0 ? sorteio.Empreendimento5 : null);
+            AtualizarParametro("EMPREENDIMENTO_6", sorteio.Empreendimento6Ativo && sorteio.Empreendimento6.Length > 0 ? sorteio.Empreendimento6 : null);
         }
 
         public void AtualizarStatusSorteio(string status)
@@ -283,12 +292,12 @@ namespace Habitasorte.Business
 
         public int ContagemCandidatos()
         {
-            return ExecuteScalar<int>("SELECT COUNT(*) FROM CANDIDATO");
+            return ExecuteScalar("SELECT COUNT(*) FROM CANDIDATO");
         }
 
         private int CandidatosDisponiveisLista(int idLista)
         {
-            return ExecuteScalar<int>($"SELECT COUNT(*) FROM CANDIDATO_LISTA INNER JOIN CANDIDATO ON CANDIDATO_LISTA.ID_CANDIDATO = CANDIDATO.ID_CANDIDATO WHERE CANDIDATO.CONTEMPLADO = 0 AND CANDIDATO_LISTA.ID_LISTA = {idLista}");
+            return ExecuteScalar($"SELECT COUNT(*) FROM CANDIDATO_LISTA INNER JOIN CANDIDATO ON CANDIDATO_LISTA.ID_CANDIDATO = CANDIDATO.ID_CANDIDATO WHERE CANDIDATO.CONTEMPLADO = 0 AND CANDIDATO_LISTA.ID_LISTA = {idLista}");
         }
 
         private string AnonimizarInicioCpf(object valor)
@@ -368,28 +377,30 @@ namespace Habitasorte.Business
 
             while (dataReader.Read())
             {
-                idCandidato++;
+                string cpf = AnonimizarInicioCpf(dataReader[dataReader.GetOrdinal("CPF_DO_RESPONSÁVEL")]);
+                if (!String.IsNullOrWhiteSpace(cpf))
+                {
+                    idCandidato++;
+                    string nome = dataReader.GetString(dataReader.GetOrdinal("NOME_DO_RESPONSÁVEL"));
+                    int qtdCriterios = Convert.ToInt32(dataReader[dataReader.GetOrdinal("TOTAL_DE_CRITÉRIOS")]);
+                    bool deficiente = ConverterBooleano(dataReader[dataReader.GetOrdinal("DEFICIENTE")]);
+                    bool idoso = ConverterBooleano(dataReader[dataReader.GetOrdinal("RESPONSÁVEL_E_OU__CÔNJUGE_IDOSO_60")]);
+                    bool superIdoso = ConverterBooleano(dataReader[dataReader.GetOrdinal("RESPONSÁVEL_E_OU_CÔNJUGE_COM_80_ANOS_OU_MAIS")]);
+                    int inscricao = Convert.ToInt32(dataReader[dataReader.GetOrdinal("NÚMERO_DA_INSCRIÇÃO")]);
+                    int rendaBruta = Convert.ToInt32(dataReader[dataReader.GetOrdinal("FAIXA_SALARIAL")]);
 
-                string cpf = AnonimizarInicioCpf(dataReader[dataReader.GetOrdinal("CPF DO RESPONSÁVEL")]);
-                string nome = dataReader.GetString(dataReader.GetOrdinal("NOME DO RESPONSÁVEL"));
-                int qtdCriterios = Convert.ToInt32(dataReader[dataReader.GetOrdinal("TOTAL DE CRITÉRIOS")]);
-                bool deficiente = ConverterBooleano(dataReader[dataReader.GetOrdinal("DEFICIENTE")]);
-                bool idoso = ConverterBooleano(dataReader[dataReader.GetOrdinal("RESPONSÁVEL E/OU  CÔNJUGE IDOSO (60+)")]);
-                bool superIdoso = ConverterBooleano(dataReader[dataReader.GetOrdinal("RESPONSÁVEL E OU CÔNJUGE COM 80 ANOS OU MAIS")]);
-                int inscricao = Convert.ToInt32(dataReader[dataReader.GetOrdinal("NÚMERO DA INSCRIÇÃO")]);
-                int rendaBruta = Convert.ToInt32(dataReader[dataReader.GetOrdinal("FAIXA SALARIAL")]);
-
-                ExecuteNonQuery($"INSERT INTO CANDIDATO (ID_CANDIDATO, CPF, NOME, LISTA_DEFICIENTES, LISTA_IDOSOS, LISTA_SUPER_IDOSOS, INSCRICAO, RENDA_BRUTA, QUANTIDADE_CRITERIOS) VALUES (@ID_CANDIDATO, @CPF, @NOME, @DEFICIENTE, @IDOSO, @SUPER_IDOSO, @INSCRICAO, @RENDA, @CRITERIOS)",
-                    new SQLiteParameter("ID_CANDIDATO", idCandidato) { DbType = DbType.Int32 },
-                    new SQLiteParameter("CPF", cpf) { DbType = DbType.String },
-                    new SQLiteParameter("NOME", nome) { DbType = DbType.String },
-                    new SQLiteParameter("DEFICIENTE", deficiente) { DbType = DbType.Boolean },
-                    new SQLiteParameter("IDOSO", idoso) { DbType = DbType.Boolean },
-                    new SQLiteParameter("SUPER_IDOSO", superIdoso) { DbType = DbType.Boolean },
-                    new SQLiteParameter("INSCRICAO", inscricao) { DbType = DbType.Int32 },
-                    new SQLiteParameter("RENDA", rendaBruta) { DbType = DbType.Int32 },
-                    new SQLiteParameter("CRITERIOS", qtdCriterios) { DbType = DbType.Int32 }
-                );
+                    ExecuteNonQuery($"INSERT INTO CANDIDATO (ID_CANDIDATO, CPF, NOME, LISTA_DEFICIENTES, LISTA_IDOSOS, LISTA_SUPER_IDOSOS, INSCRICAO, RENDA_BRUTA, QUANTIDADE_CRITERIOS) VALUES (@ID_CANDIDATO, @CPF, @NOME, @DEFICIENTE, @IDOSO, @SUPER_IDOSO, @INSCRICAO, @RENDA, @CRITERIOS)",
+                        new SQLiteParameter("ID_CANDIDATO", idCandidato) { DbType = DbType.Int32 },
+                        new SQLiteParameter("CPF", cpf) { DbType = DbType.String },
+                        new SQLiteParameter("NOME", nome) { DbType = DbType.String },
+                        new SQLiteParameter("DEFICIENTE", deficiente) { DbType = DbType.Boolean },
+                        new SQLiteParameter("IDOSO", idoso) { DbType = DbType.Boolean },
+                        new SQLiteParameter("SUPER_IDOSO", superIdoso) { DbType = DbType.Boolean },
+                        new SQLiteParameter("INSCRICAO", inscricao) { DbType = DbType.Int32 },
+                        new SQLiteParameter("RENDA", rendaBruta) { DbType = DbType.Int32 },
+                        new SQLiteParameter("CRITERIOS", qtdCriterios) { DbType = DbType.Int32 }
+                    );
+                }
             }
 
             resultSet.Close();
@@ -413,27 +424,184 @@ namespace Habitasorte.Business
 
             /* Gera as listas de sorteio por grupo e faixa de renda. */
             //int incrementoOrdem = listaAtual;
-            int idPrimeiraLista = listaAtual;
+            //int idPrimeiraLista = listaAtual;
             int idUltimaLista;
+            int qtdEmpreendimentos = totalListas / 18;
+            //int ordem = (listaAtual + 2) / 3;
+            int ordem = listaAtual;
+            //if (qtdEmpreendimentos == 1)
+            //{
+            //    ordem = listaAtual;
+            //}
+            //if (qtdEmpreendimentos != 1)
+            //{
+            //    ordem = (listaAtual + 2) / 3;
+            //}
+
+            //if (faixa.Contains("RESERVA"))
+            //{
+
+            //    int dif = 0;
+            //    switch (qtdEmpreendimentos)
+            //    {
+            //        case 1:
+            //            dif = 20;
+            //            break;
+            //        case 2:
+            //            dif = 20;
+            //            break;
+            //        case 3:
+            //            dif = 23;
+            //            break;
+            //        case 4:
+            //            dif = 26;
+            //            break;
+            //        case 5:
+            //            dif = 29;
+            //            break;
+            //        case 6:
+            //            dif = 32;
+            //            break;
+            //    }
+            //    if (faixa.Contains("Faixa B"))
+            //    {
+            //        dif = dif + 6;
+            //    }
+            //    if (faixa.Contains("Faixa C"))
+            //    {
+            //        dif = dif + 12;
+            //    }
+            //    ordem = (listaAtual + dif) / 3;
+            //}
+
+            //if (qtdEmpreendimentos == 1)
+            //{
+            //    ordem = listaAtual;
+            //}
+
+            //if (qtdEmpreendimentos == 2) {
+            //    if (faixa.Contains("Faixa A"))
+            //    {
+            //        ordem = (listaAtual + 2) / 3;
+            //    }
+            //    else
+            //    {
+            //        if (faixa.Contains("Faixa B"))
+            //        {
+            //            ordem = (1 + listaAtual + (incrementoOrdem * 3)) / qtdEmpreendimentos;
+            //        }
+            //        else
+            //        {
+            //            if (faixa.Contains("Faixa C"))
+            //            {
+            //                ordem = (1 + listaAtual + (incrementoOrdem * 6)) / qtdEmpreendimentos;
+            //            }
+            //        }
+            //    }
+            //}
+
+            //if (qtdEmpreendimentos == 3)
+            //{
+            //    if (faixa.Contains("Faixa A"))
+            //    {
+            //        ordem = (listaAtual + 2) / 3;
+            //    }
+            //    else
+            //    {
+            //        if (faixa.Contains("Faixa B"))
+            //        {
+            //            ordem = listaAtual;
+            //        }
+            //        else
+            //        {
+            //            if (faixa.Contains("Faixa C"))
+            //            {
+            //                ordem = (1 + listaAtual + (incrementoOrdem * 6)) / qtdEmpreendimentos;
+            //            }
+            //        }
+            //    }
+            //}
+
+            //if (qtdEmpreendimentos > 1)
+            //{
+                int referencia = ((listaAtual - 1) / 3) + 1;
+                int resto = listaAtual % (qtdEmpreendimentos * 3);
+                if (referencia <= qtdEmpreendimentos)
+                {
+                    ordem = referencia;
+                } else
+                {
+                    int[] iniciais = new int[7];
+                    iniciais[0] = 1;
+
+                    for (int ix = 1; ix < iniciais.Length; ix++)
+                    {
+                        iniciais[ix] = 1 + (ix * qtdEmpreendimentos * 3);
+                    }
+                    if (iniciais.Contains(listaAtual))
+                    {
+                        ordem = listaAtual;
+                    } else
+                    {
+                        for (int ix = 1; ix < iniciais.Length; ix++)
+                        {
+                            if (iniciais[ix] > listaAtual)
+                            {
+                                ordem = ((listaAtual - iniciais[ix - 1]) / 3) + iniciais[ix - 1];
+                                break;
+                            }
+                        }
+                    }
+                }
+            //}
+
+            //if (qtdEmpreendimentos > 1)
+            //{
+            //    if (faixa.Contains("RESERVA"))
+            //    {
+            //        //ordem = ordem + ((3 * 3 * qtdEmpreendimentos) - (3 * qtdEmpreendimentos));
+            //        if (faixa.Contains("Faixa A"))
+            //        {
+            //            //ordem = listaAtual;
+            //            ordem = ordem + (qtdEmpreendimentos * 2 * 3);
+            //        }
+            //        else
+            //        {
+            //            if (faixa.Contains("Faixa B"))
+            //            {
+            //                ordem = ordem + (qtdEmpreendimentos * 2 * 3) - 3;
+            //            }
+            //            else
+            //            {
+            //                if (faixa.Contains("Faixa C"))
+            //                {
+            //                    ordem = ordem + (qtdEmpreendimentos * 2 * 3) - 3;
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
 
             updateStatus($"Gerando lista {listaAtual} de {totalListas}.");
-            updateProgress((int)((++listaAtual / (double)totalListas) * 100));
+            updateProgress((int)((listaAtual / (double)totalListas) * 100));
 
-            idUltimaLista = CriarListaSorteioPorGrupoFaixa(faixa, "Idosos", listaAtual, idPrimeiraLista);
+            idUltimaLista = CriarListaSorteioPorGrupoFaixa(faixa, "Idosos", listaAtual, ordem);
             ExecuteNonQuery($"INSERT INTO CANDIDATO_LISTA(ID_LISTA, ID_CANDIDATO) SELECT {idUltimaLista}, ID_CANDIDATO FROM CANDIDATO WHERE LISTA_IDOSOS = 1 AND RENDA_BRUTA >= {rendaMinima} AND RENDA_BRUTA <= {rendaMaxima}");
             ClassificarListaSorteioIdosos(idUltimaLista);
+            ++listaAtual;
 
-            updateStatus($"Gerando lista {++listaAtual} de {totalListas}.");
-            updateProgress((int)((++listaAtual / (double)totalListas) * 100));
+            updateStatus($"Gerando lista {listaAtual} de {totalListas}.");
+            updateProgress((int)((listaAtual / (double)totalListas) * 100));
 
-            idUltimaLista = CriarListaSorteioPorGrupoFaixa(faixa, "Deficientes", listaAtual, idPrimeiraLista + incrementoOrdem);
+            idUltimaLista = CriarListaSorteioPorGrupoFaixa(faixa, "Deficientes", listaAtual, ordem + incrementoOrdem);
             ExecuteNonQuery($"INSERT INTO CANDIDATO_LISTA(ID_LISTA, ID_CANDIDATO) SELECT {idUltimaLista}, ID_CANDIDATO FROM CANDIDATO WHERE LISTA_DEFICIENTES = 1 AND RENDA_BRUTA >= {rendaMinima} AND RENDA_BRUTA <= {rendaMaxima}");
             ClassificarListaSorteioSimples(idUltimaLista);
+            ++listaAtual;
 
-            updateStatus($"Gerando lista {++listaAtual} de {totalListas}.");
-            updateProgress((int)((++listaAtual / (double)totalListas) * 100));
+            updateStatus($"Gerando lista {listaAtual} de {totalListas}.");
+            updateProgress((int)((listaAtual / (double)totalListas) * 100));
 
-            idUltimaLista = CriarListaSorteioPorGrupoFaixa(faixa, "Geral", listaAtual, idPrimeiraLista + (2 * incrementoOrdem));
+            idUltimaLista = CriarListaSorteioPorGrupoFaixa(faixa, "Geral", listaAtual, ordem + (2 * incrementoOrdem));
             ExecuteNonQuery($"INSERT INTO CANDIDATO_LISTA(ID_LISTA, ID_CANDIDATO) SELECT {idUltimaLista}, ID_CANDIDATO FROM CANDIDATO WHERE RENDA_BRUTA >= {rendaMinima} AND RENDA_BRUTA <= {rendaMaxima}");
             ClassificarListaSorteioSimples(idUltimaLista);
         }
@@ -457,7 +625,7 @@ namespace Habitasorte.Business
                 new SQLiteParameter("QTD_EMPREENDIMENTOS", qtdEmpreendimentos),
                 new SQLiteParameter("INCREMENTO_ORDEM", incremento)
             );
-            return (int)ExecuteScalar<decimal>("SELECT @@IDENTITY");
+            return (int)ExecuteScalar("SELECT @@IDENTITY");
         }
 
         private void ClassificarListaSorteioIdosos(int idUltimaLista)
@@ -592,7 +760,7 @@ namespace Habitasorte.Business
             }
         }
 
-        public void SortearCandidatos(Action<string> updateStatus, Action<int> updateProgress, Action<string, bool> logText, int? sementePersonalizada = null)
+        public Lista SortearCandidatos(Action<string> updateStatus, Action<int> updateProgress, Action<string, bool> logText, int? sementePersonalizada = null)
         {
 
             //updateStatus("Iniciando sorteio...");
@@ -602,18 +770,42 @@ namespace Habitasorte.Business
             {
                 throw new Exception("Não existem listas disponíveis para sorteio.");
             }
-            bool titular = !proximaLista.Nome.Contains("RESERVA");
+            //bool titular = !proximaLista.Nome.Contains("RESERVA");
             double quantidadeAtual = 0;
             double quantidadeTotal = Math.Min(proximaLista.Quantidade, (int)proximaLista.CandidatosDisponiveis);
 
-            string fonteSemente = "PERSONALIZADA";
-            int semente = (sementePersonalizada == null) ? ObterSemente(ref fonteSemente) : (int)sementePersonalizada;
-            ExecuteNonQuery(
-                "UPDATE LISTA SET SORTEADA = 1, SEMENTE_SORTEIO = @SEMENTE_SORTEIO, FONTE_SEMENTE = @FONTE_SEMENTE WHERE ID_LISTA = @ID_LISTA",
-                new SQLiteParameter("SEMENTE_SORTEIO", semente) { DbType = DbType.Int32 },
-                new SQLiteParameter("FONTE_SEMENTE", fonteSemente) { DbType = DbType.String },
-                new SQLiteParameter("ID_LISTA", proximaLista.IdLista) { DbType = DbType.Int32 }
-            );
+            int semente = 0;
+            System.Data.SqlTypes.SqlInt32 sementeConsultada = new System.Data.SqlTypes.SqlInt32();
+            string querySementeLista = "SELECT SEMENTE_SORTEIO FROM LISTA WHERE ID_LISTA = @ID_LISTA";
+            SQLiteCommand consultaSemente = CreateCommand(querySementeLista);
+            consultaSemente.Parameters.AddWithValue("ID_LISTA", proximaLista.IdLista);
+
+            using (SQLiteDataReader resultadoSemente = consultaSemente.ExecuteReader())
+            {
+                if (resultadoSemente.Read())
+                {
+                    if (!resultadoSemente.IsDBNull(resultadoSemente.GetOrdinal("SEMENTE_SORTEIO")))
+                    {
+                        sementeConsultada = Convert.ToInt32(resultadoSemente[resultadoSemente.GetOrdinal("SEMENTE_SORTEIO")]);
+                    }
+                }
+            }
+
+            if (sementeConsultada.IsNull)
+            {
+                string fonteSemente = "PERSONALIZADA";
+                semente = (sementePersonalizada == null) ? ObterSemente(ref fonteSemente) : (int)sementePersonalizada;
+                ExecuteNonQuery(
+                    "UPDATE LISTA SET SEMENTE_SORTEIO = @SEMENTE_SORTEIO, FONTE_SEMENTE = @FONTE_SEMENTE WHERE ID_LISTA = @ID_LISTA",
+                    new SQLiteParameter("SEMENTE_SORTEIO", semente) { DbType = DbType.Int32 },
+                    new SQLiteParameter("FONTE_SEMENTE", fonteSemente) { DbType = DbType.String },
+                    new SQLiteParameter("ID_LISTA", proximaLista.IdLista) { DbType = DbType.Int32 }
+                );
+            } else
+            {
+                semente = sementeConsultada.Value;
+            }
+
             Random random = new Random(semente);
 
             string queryGrupoSorteio = @"
@@ -640,7 +832,14 @@ namespace Habitasorte.Business
 
             GrupoSorteio grupoSorteio = null;
             StringBuilder lista = new StringBuilder();
-            for (int i = 1; i <= proximaLista.Quantidade; i++)
+
+            string queryQuantidadeExibidos = "SELECT COUNT(*) FROM CANDIDATO_LISTA WHERE ID_LISTA = @ID_LISTA AND EXIBIDO = 1";
+            SQLiteCommand quantidadeExibidos = CreateCommand(queryQuantidadeExibidos);
+            quantidadeExibidos.Parameters.AddWithValue("ID_LISTA", proximaLista.IdLista);
+
+            int qtdExibidos = ExecuteScalar(queryQuantidadeExibidos, new SQLiteParameter("ID_LISTA", proximaLista.IdLista) { DbType = DbType.Int32 });
+
+            for (int i = (qtdExibidos + 1); i <= proximaLista.Quantidade; i++)
             {
 
                 if (grupoSorteio == null || grupoSorteio.Quantidade < 1)
@@ -658,7 +857,7 @@ namespace Habitasorte.Business
                         }
                         else
                         {
-                            grupoSorteio = null;
+                            return proximaLista;
                         }
                     }
                     if (grupoSorteio != null)
@@ -684,7 +883,7 @@ namespace Habitasorte.Business
 
                 if (grupoSorteio == null)
                 {
-                    break;
+                    return proximaLista;
                 }
                 else
                 {
@@ -719,7 +918,7 @@ namespace Habitasorte.Business
                 updateProgress((int)((quantidadeAtual / quantidadeTotal) * 100));
 
             }
-
+            return proximaLista;
         }
 
         public Lista SortearProximaLista(Action<string> updateStatus, Action<int> updateProgress, Action<string, bool> logText, int? sementePersonalizada = null)
@@ -741,7 +940,7 @@ namespace Habitasorte.Business
                     resultSet.Read();
                     int idLista = Convert.ToInt32(resultSet[resultSet.GetOrdinal("ID_LISTA")]);
                     string queryNomeLista = @"
-                        SELECT NOME
+                        SELECT NOME, ORDEM_SORTEIO
                         FROM LISTA
                         WHERE ID_LISTA = @ID_LISTA
                     ";
@@ -751,8 +950,9 @@ namespace Habitasorte.Business
                     SQLiteDataReader resultNomeLista = commandNomeLista.ExecuteReader();
                     resultNomeLista.Read();
                     string nomeLista = resultNomeLista.GetString(resultNomeLista.GetOrdinal("NOME"));
+                    int ordemSorteioLista = Convert.ToInt32(resultNomeLista[resultNomeLista.GetOrdinal("ORDEM_SORTEIO")]);
                     int qtdCandidatos = CandidatosDisponiveisLista(idLista);
-                    updateStatus("Sorteando lista " + nomeLista + " - " + qtdCandidatos + " candidatos");
+                    updateStatus("Sorteando Lista " + ordemSorteioLista.ToString("00") + " - " + nomeLista + " - " + qtdCandidatos + " candidatos");
                     CandidatoGrupo candidatoSorteado = new CandidatoGrupo
                     {
                         Sequencia = Convert.ToInt32(resultSet[resultSet.GetOrdinal("SEQUENCIA_CONTEMPLACAO")]),
@@ -776,27 +976,37 @@ namespace Habitasorte.Business
                             };
                             ExibirSorteado(candidatoSorteado, idLista, logText);
                         }
-                        updateStatus("Sorteio Lista " + nomeLista + " finalizado!");
-                        lista = new Lista { IdLista = idLista, Nome = nomeLista };
+                        lista = new Lista { IdLista = idLista, Nome = nomeLista, OrdemSorteio = ordemSorteioLista };
+                        AtualizarListaSorteada(lista, updateStatus);
                     }
                     else
                     {
                         if (resultSet.Read() == false)
                         {
-                            updateStatus("Sorteio Lista " + nomeLista + " finalizado!");
-                            lista = new Lista { IdLista = idLista, Nome = nomeLista };
+                            lista = new Lista { IdLista = idLista, Nome = nomeLista, OrdemSorteio = ordemSorteioLista };
+                            AtualizarListaSorteada(lista, updateStatus);
                         }
                     }
                     resultNomeLista.Close();
                 }
                 else
                 {
-                    SortearCandidatos(updateStatus, updateProgress, logText, sementePersonalizada);
-                    lista = SortearProximaLista(updateStatus, updateProgress, logText, sementePersonalizada); //VER
+                    lista = SortearCandidatos(updateStatus, updateProgress, logText, sementePersonalizada);
+                    
                     if (lista != null)
                     {
-                        int qtdCandidatos = CandidatosDisponiveisLista(lista.IdLista);
-                        updateStatus("Sorteio Lista " + lista.Nome + " - " + qtdCandidatos + " candidatos");
+                        if (lista.CandidatosDisponiveis > 0 && lista.Quantidade > 0)
+                        {
+                            lista = SortearProximaLista(updateStatus, updateProgress, logText, sementePersonalizada);
+                            if (lista != null)
+                            {
+                                int qtdCandidatos = CandidatosDisponiveisLista(lista.IdLista);
+                                updateStatus("Sorteio Lista " + lista.OrdemSorteio.ToString("00") + " - " + lista.Nome + " - " + qtdCandidatos + " candidatos");
+                            }
+                        } else
+                        {
+                            AtualizarListaSorteada(lista, updateStatus);
+                        }
                     }
                 }
                 resultSet.Close();
@@ -959,7 +1169,7 @@ namespace Habitasorte.Business
         {
 
             int count = 0;
-            int total = ExecuteScalar<int>($"SELECT COUNT(*) FROM {tableName}");
+            int total = ExecuteScalar($"SELECT COUNT(*) FROM {tableName}");
 
             using (StreamWriter writter = new StreamWriter($"{directoryPath}/{tableName}.CSV"))
             {
@@ -1118,7 +1328,7 @@ namespace Habitasorte.Business
 
         public string ValidarCabecalho(string cabecalho)
         {
-            string[] termosCabecalho = { "CPF DO RESPONSÁVEL", "NOME DO RESPONSÁVEL", "TOTAL DE CRITÉRIOS", "DEFICIENTE", "RESPONSÁVEL E/OU  CÔNJUGE IDOSO (60+)", "RESPONSÁVEL E OU CÔNJUGE COM 80 ANOS OU MAIS", "NÚMERO DA INSCRIÇÃO", "FAIXA SALARIAL" };
+            string[] termosCabecalho = { "CPF_DO_RESPONSÁVEL", "NOME_DO_RESPONSÁVEL", "TOTAL_DE_CRITÉRIOS", "DEFICIENTE", "RESPONSÁVEL_E_OU__CÔNJUGE_IDOSO_60", "RESPONSÁVEL_E_OU_CÔNJUGE_COM_80_ANOS_OU_MAIS", "NÚMERO_DA_INSCRIÇÃO", "FAIXA_SALARIAL" };
             StringBuilder listaTermosNaoEncontrados = new StringBuilder();
 
             for(int ix=0; ix < termosCabecalho.Count(); ix++)
