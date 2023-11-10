@@ -339,12 +339,14 @@ namespace Habitasorte {
             Microsoft.Win32.OpenFileDialog fileDialog = new Microsoft.Win32.OpenFileDialog();
             fileDialog.DefaultExt = ".xlsx";
             fileDialog.Filter = "Planilha Excel (*.xlsx)|*.xlsx|Planilha Excel 97-2003 (*.xls)|*.xls";
+            
 
             bool? result = fileDialog.ShowDialog();
             if (result == true)
             {
                 txtFaixaA.Text = fileDialog.FileName;
                 btnImportarArquivo.IsEnabled = true;
+                empreendimento1.Focus();
             }
         }
 
@@ -431,13 +433,13 @@ namespace Habitasorte {
 
                 try
                 {
-                    int ordem = 1;
-                    int qtdEmpreendimentos = (String.IsNullOrWhiteSpace(nomeEmpreendimento1) ? 1 : 0) +
-                                             (String.IsNullOrWhiteSpace(nomeEmpreendimento2) ? 1 : 0) +
-                                             (String.IsNullOrWhiteSpace(nomeEmpreendimento3) ? 1 : 0) +
-                                             (String.IsNullOrWhiteSpace(nomeEmpreendimento4) ? 1 : 0) +
-                                             (String.IsNullOrWhiteSpace(nomeEmpreendimento5) ? 1 : 0) +
-                                             (String.IsNullOrWhiteSpace(nomeEmpreendimento6) ? 1 : 0);
+                    int listaAtual = 1;
+                    int qtdEmpreendimentos = (String.IsNullOrWhiteSpace(nomeEmpreendimento1) ? 0 : 1) +
+                                             (String.IsNullOrWhiteSpace(nomeEmpreendimento2) ? 0 : 1) +
+                                             (String.IsNullOrWhiteSpace(nomeEmpreendimento3) ? 0 : 1) +
+                                             (String.IsNullOrWhiteSpace(nomeEmpreendimento4) ? 0 : 1) +
+                                             (String.IsNullOrWhiteSpace(nomeEmpreendimento5) ? 0 : 1) +
+                                             (String.IsNullOrWhiteSpace(nomeEmpreendimento6) ? 0 : 1);
 
                     int qtdListas = 3 * 3 * 2 * qtdEmpreendimentos;
 
@@ -446,170 +448,170 @@ namespace Habitasorte {
                         throw new Exception ("Nome do Empreendimento 1 não preenchido");
                     }
 
-                    Service.CriarListasSorteioDeFaixas(caminhoArquivoFaixaA, NomearLista(nomeEmpreendimento1, "A", "100", 0, 3), updateStatus, updateProgress, ordem, qtdListas, qtdEmpreendimentos, 0, 3);
+                    Service.CriarListasSorteioDeFaixas(caminhoArquivoFaixaA, NomearLista(nomeEmpreendimento1, "A", "100", 0, 3), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 0, 3);
                     if (!String.IsNullOrWhiteSpace(nomeEmpreendimento2)) {
-                        ordem = ordem + 1;
-                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento2, "A", "100", 0, 3), updateStatus, updateProgress, ordem, qtdListas, qtdEmpreendimentos, 0, 3);
+                        listaAtual = listaAtual + 3;
+                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento2, "A", "100", 0, 3), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 0, 3);
                     }
                     if (!String.IsNullOrWhiteSpace(nomeEmpreendimento3))
                     {
-                        ordem = ordem + 1;
-                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento3, "A", "100", 0, 3), updateStatus, updateProgress, ordem, qtdListas, qtdEmpreendimentos, 0, 3);
+                        listaAtual = listaAtual + 3;
+                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento3, "A", "100", 0, 3), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 0, 3);
                     }
                     if (!String.IsNullOrWhiteSpace(nomeEmpreendimento4))
                     {
-                        ordem = ordem + 1;
-                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento4, "A", "100", 0, 3), updateStatus, updateProgress, ordem, qtdListas, qtdEmpreendimentos, 0, 3);
+                        listaAtual = listaAtual + 3;
+                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento4, "A", "100", 0, 3), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 0, 3);
                     }
                     if (!String.IsNullOrWhiteSpace(nomeEmpreendimento5))
                     {
-                        ordem = ordem + 1;
-                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento5, "A", "100", 0, 3), updateStatus, updateProgress, ordem, qtdListas, qtdEmpreendimentos, 0, 3);
+                        listaAtual = listaAtual + 3;
+                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento5, "A", "100", 0, 3), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 0, 3);
                     }
                     if (!String.IsNullOrWhiteSpace(nomeEmpreendimento6))
                     {
-                        ordem = ordem + 1;
-                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento6, "A", "100", 0, 3), updateStatus, updateProgress, ordem, qtdListas, qtdEmpreendimentos, 0, 3);
+                        listaAtual = listaAtual + 3;
+                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento6, "A", "100", 0, 3), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 0, 3);
                     }
 
-                    ordem = ordem + 1;
-                    Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento1, "B", "50", 2, 5), updateStatus, updateProgress, ordem, qtdListas, qtdEmpreendimentos, 2, 5);
+                    listaAtual = listaAtual + 3;
+                    Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento1, "B", "50", 2, 5), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 2, 5);
                     if (!String.IsNullOrWhiteSpace(nomeEmpreendimento2))
                     {
-                        ordem = ordem + 1;
-                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento2, "B", "50", 2, 5), updateStatus, updateProgress, ordem, qtdListas, qtdEmpreendimentos, 2, 5);
+                        listaAtual = listaAtual + 3;
+                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento2, "B", "50", 2, 5), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 2, 5);
                     }
                     if (!String.IsNullOrWhiteSpace(nomeEmpreendimento3))
                     {
-                        ordem = ordem + 1;
-                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento3, "B", "50", 2, 5), updateStatus, updateProgress, ordem, qtdListas, qtdEmpreendimentos, 2, 5);
+                        listaAtual = listaAtual + 3;
+                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento3, "B", "50", 2, 5), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 2, 5);
                     }
                     if (!String.IsNullOrWhiteSpace(nomeEmpreendimento4))
                     {
-                        ordem = ordem + 1;
-                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento4, "B", "50", 2, 5), updateStatus, updateProgress, ordem, qtdListas, qtdEmpreendimentos, 2, 5);
+                        listaAtual = listaAtual + 3;
+                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento4, "B", "50", 2, 5), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 2, 5);
                     }
                     if (!String.IsNullOrWhiteSpace(nomeEmpreendimento5))
                     {
-                        ordem = ordem + 1;
-                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento5, "B", "50", 2, 5), updateStatus, updateProgress, ordem, qtdListas, qtdEmpreendimentos, 2, 5);
+                        listaAtual = listaAtual + 3;
+                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento5, "B", "50", 2, 5), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 2, 5);
                     }
                     if (!String.IsNullOrWhiteSpace(nomeEmpreendimento6))
                     {
-                        ordem = ordem + 1;
-                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento6, "B", "50", 2, 5), updateStatus, updateProgress, ordem, qtdListas, qtdEmpreendimentos, 2, 5);
+                        listaAtual = listaAtual + 3;
+                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento6, "B", "50", 2, 5), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 2, 5);
                     }
 
-                    ordem = ordem + 1;
-                    Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento1, "C", "25", 3, 7), updateStatus, updateProgress, ordem, qtdListas, qtdEmpreendimentos, 3, 7);
+                    listaAtual = listaAtual + 3;
+                    Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento1, "C", "25", 3, 7), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 3, 7);
                     if (!String.IsNullOrWhiteSpace(nomeEmpreendimento2))
                     {
-                        ordem = ordem + 1;
-                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento2, "C", "25", 3, 7), updateStatus, updateProgress, ordem, qtdListas, qtdEmpreendimentos, 3, 7);
+                        listaAtual = listaAtual + 3;
+                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento2, "C", "25", 3, 7), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 3, 7);
                     }
                     if (!String.IsNullOrWhiteSpace(nomeEmpreendimento3))
                     {
-                        ordem = ordem + 1;
-                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento3, "C", "25", 3, 7), updateStatus, updateProgress, ordem, qtdListas, qtdEmpreendimentos, 3, 7);
+                        listaAtual = listaAtual + 3;
+                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento3, "C", "25", 3, 7), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 3, 7);
                     }
                     if (!String.IsNullOrWhiteSpace(nomeEmpreendimento4))
                     {
-                        ordem = ordem + 1;
-                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento4, "C", "25", 3, 7), updateStatus, updateProgress, ordem, qtdListas, qtdEmpreendimentos, 3, 7);
+                        listaAtual = listaAtual + 3;
+                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento4, "C", "25", 3, 7), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 3, 7);
                     }
                     if (!String.IsNullOrWhiteSpace(nomeEmpreendimento5))
                     {
-                        ordem = ordem + 1;
-                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento5, "C", "25", 3, 7), updateStatus, updateProgress, ordem, qtdListas, qtdEmpreendimentos, 3, 7);
+                        listaAtual = listaAtual + 3;
+                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento5, "C", "25", 3, 7), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 3, 7);
                     }
                     if (!String.IsNullOrWhiteSpace(nomeEmpreendimento6))
                     {
-                        ordem = ordem + 1;
-                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento6, "C", "25", 3, 7), updateStatus, updateProgress, ordem, qtdListas, qtdEmpreendimentos, 3, 7);
+                        listaAtual = listaAtual + 3;
+                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento6, "C", "25", 3, 7), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 3, 7);
                     }
 
-                    ordem = ordem + 1;
-                    Service.CriarListasSorteioDeFaixas(caminhoArquivoFaixaA, NomearLista(nomeEmpreendimento1, "A RESERVA", "100", 0, 3), updateStatus, updateProgress, ordem, qtdListas, qtdEmpreendimentos, 0, 3);
+                    listaAtual = listaAtual + 3;
+                    Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento1, "A RESERVA", "100", 0, 3), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 0, 3);
                     if (!String.IsNullOrWhiteSpace(nomeEmpreendimento2))
                     {
-                        ordem = ordem + 1;
-                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento2, "A RESERVA", "100", 0, 3), updateStatus, updateProgress, ordem, qtdListas, qtdEmpreendimentos, 0, 3);
+                        listaAtual = listaAtual + 3;
+                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento2, "A RESERVA", "100", 0, 3), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 0, 3);
                     }
                     if (!String.IsNullOrWhiteSpace(nomeEmpreendimento3))
                     {
-                        ordem = ordem + 1;
-                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento3, "A RESERVA", "100", 0, 3), updateStatus, updateProgress, ordem, qtdListas, qtdEmpreendimentos, 0, 3);
+                        listaAtual = listaAtual + 3;
+                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento3, "A RESERVA", "100", 0, 3), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 0, 3);
                     }
                     if (!String.IsNullOrWhiteSpace(nomeEmpreendimento4))
                     {
-                        ordem = ordem + 1;
-                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento4, "A RESERVA", "100", 0, 3), updateStatus, updateProgress, ordem, qtdListas, qtdEmpreendimentos, 0, 3);
+                        listaAtual = listaAtual + 3;
+                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento4, "A RESERVA", "100", 0, 3), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 0, 3);
                     }
                     if (!String.IsNullOrWhiteSpace(nomeEmpreendimento5))
                     {
-                        ordem = ordem + 1;
-                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento5, "A RESERVA", "100", 0, 3), updateStatus, updateProgress, ordem, qtdListas, qtdEmpreendimentos, 0, 3);
+                        listaAtual = listaAtual + 3;
+                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento5, "A RESERVA", "100", 0, 3), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 0, 3);
                     }
                     if (!String.IsNullOrWhiteSpace(nomeEmpreendimento6))
                     {
-                        ordem = ordem + 1;
-                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento6, "A RESERVA", "100", 0, 3), updateStatus, updateProgress, ordem, qtdListas, qtdEmpreendimentos, 0, 3);
+                        listaAtual = listaAtual + 3;
+                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento6, "A RESERVA", "100", 0, 3), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 0, 3);
                     }
 
-                    ordem = ordem + 1;
-                    Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento1, "B RESERVA", "50", 2, 5), updateStatus, updateProgress, ordem, qtdListas, qtdEmpreendimentos, 2, 5);
+                    listaAtual = listaAtual + 3;
+                    Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento1, "B RESERVA", "50", 2, 5), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 2, 5);
                     if (!String.IsNullOrWhiteSpace(nomeEmpreendimento2))
                     {
-                        ordem = ordem + 1;
-                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento2, "B RESERVA", "50", 2, 5), updateStatus, updateProgress, ordem, qtdListas, qtdEmpreendimentos, 2, 5);
+                        listaAtual = listaAtual + 3;
+                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento2, "B RESERVA", "50", 2, 5), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 2, 5);
                     }
                     if (!String.IsNullOrWhiteSpace(nomeEmpreendimento3))
                     {
-                        ordem = ordem + 1;
-                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento3, "B RESERVA", "50", 2, 5), updateStatus, updateProgress, ordem, qtdListas, qtdEmpreendimentos, 2, 5);
+                        listaAtual = listaAtual + 3;
+                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento3, "B RESERVA", "50", 2, 5), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 2, 5);
                     }
                     if (!String.IsNullOrWhiteSpace(nomeEmpreendimento4))
                     {
-                        ordem = ordem + 1;
-                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento4, "B RESERVA", "50", 2, 5), updateStatus, updateProgress, ordem, qtdListas, qtdEmpreendimentos, 2, 5);
+                        listaAtual = listaAtual + 3;
+                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento4, "B RESERVA", "50", 2, 5), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 2, 5);
                     }
                     if (!String.IsNullOrWhiteSpace(nomeEmpreendimento5))
                     {
-                        ordem = ordem + 1;
-                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento5, "B RESERVA", "50", 2, 5), updateStatus, updateProgress, ordem, qtdListas, qtdEmpreendimentos, 2, 5);
+                        listaAtual = listaAtual + 3;
+                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento5, "B RESERVA", "50", 2, 5), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 2, 5);
                     }
                     if (!String.IsNullOrWhiteSpace(nomeEmpreendimento6))
                     {
-                        ordem = ordem + 1;
-                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento6, "B RESERVA", "50", 2, 5), updateStatus, updateProgress, ordem, qtdListas, qtdEmpreendimentos, 2, 5);
+                        listaAtual = listaAtual + 3;
+                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento6, "B RESERVA", "50", 2, 5), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 2, 5);
                     }
 
-                    ordem = ordem + 1;
-                    Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento1, "C RESERVA", "25", 3, 7), updateStatus, updateProgress, ordem, qtdListas, qtdEmpreendimentos, 3, 7);
+                    listaAtual = listaAtual + 3;
+                    Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento1, "C RESERVA", "25", 3, 7), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 3, 7);
                     if (!String.IsNullOrWhiteSpace(nomeEmpreendimento2))
                     {
-                        ordem = ordem + 1;
-                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento2, "C RESERVA", "25", 3, 7), updateStatus, updateProgress, ordem, qtdListas, qtdEmpreendimentos, 3, 7);
+                        listaAtual = listaAtual + 3;
+                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento2, "C RESERVA", "25", 3, 7), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 3, 7);
                     }
                     if (!String.IsNullOrWhiteSpace(nomeEmpreendimento3))
                     {
-                        ordem = ordem + 1;
-                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento3, "C RESERVA", "25", 3, 7), updateStatus, updateProgress, ordem, qtdListas, qtdEmpreendimentos, 3, 7);
+                        listaAtual = listaAtual + 3;
+                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento3, "C RESERVA", "25", 3, 7), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 3, 7);
                     }
                     if (!String.IsNullOrWhiteSpace(nomeEmpreendimento4))
                     {
-                        ordem = ordem + 1;
-                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento4, "C RESERVA", "25", 3, 7), updateStatus, updateProgress, ordem, qtdListas, qtdEmpreendimentos, 3, 7);
+                        listaAtual = listaAtual + 3;
+                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento4, "C RESERVA", "25", 3, 7), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 3, 7);
                     }
                     if (!String.IsNullOrWhiteSpace(nomeEmpreendimento5))
                     {
-                        ordem = ordem + 1;
-                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento5, "C RESERVA", "25", 3, 7), updateStatus, updateProgress, ordem, qtdListas, qtdEmpreendimentos, 3, 7);
+                        listaAtual = listaAtual + 3;
+                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento5, "C RESERVA", "25", 3, 7), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 3, 7);
                     }
                     if (!String.IsNullOrWhiteSpace(nomeEmpreendimento6))
                     {
-                        ordem = ordem + 1;
-                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento6, "C RESERVA", "25", 3, 7), updateStatus, updateProgress, ordem, qtdListas, qtdEmpreendimentos, 3, 7);
+                        listaAtual = listaAtual + 3;
+                        Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento6, "C RESERVA", "25", 3, 7), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 3, 7);
                     }
 
                     //Service.CriarListasSorteioDeFaixas(null, empreendimento1.Text + " - Faixa A RESERVA - 100% de Subsídio - 0 a 3 salários mínimos", updateStatus, updateProgress, 16, 30, 3, 0, 3);
@@ -738,10 +740,9 @@ namespace Habitasorte {
                     }
 
                     Dispatcher.Invoke(() => { lblNomeSorteado.Content = "";  txtLogSorteio.Clear();  txtSementePersonalizada.Text = ""; } );
+                    processing = false;
                 }
                 Dispatcher.Invoke(() => EtapaSorteio(true));
-
-                processing = false;
             };
             worker.RunWorkerAsync();
         }
@@ -820,7 +821,7 @@ namespace Habitasorte {
             if (String.IsNullOrWhiteSpace(caminhoPastaResultado))
             {
                 string[] divisorPasta = { "\\" };
-                string[] caminhoArquivoEntrada = txtFaixaA.ToString().Split(divisorPasta, StringSplitOptions.None);
+                string[] caminhoArquivoEntrada = txtFaixaA.Text.Split(divisorPasta, StringSplitOptions.None);
                 caminhoArquivoEntrada[caminhoArquivoEntrada.Count() - 1] = "";
                 caminhoPastaResultado = String.Join(divisorPasta[0], caminhoArquivoEntrada);
                 System.Configuration.ConfigurationManager.AppSettings.Set("PASTA_RESULTADO", caminhoPastaResultado);
