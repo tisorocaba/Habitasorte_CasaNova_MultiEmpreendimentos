@@ -37,61 +37,70 @@ namespace Habitasorte.Business.Pdf {
                     p.Add("CASA NOVA - PREFEITURA DE SOROCABA \n");
                     linhas.Add(string.Format("{0}\n", sorteio.Nome.ToUpper()));
                     p.Add(string.Format("{0}\n", sorteio.Nome.ToUpper()));
-                    linhas.Add(string.Format("{0:00} - {1}\n", lista.IdLista, lista.Nome.ToUpper()));
-                    p.Add(string.Format("{0:00} - {1}\n", lista.IdLista, lista.Nome.ToUpper()));
+                    linhas.Add(string.Format("Lista {0:00} - {1}\n", lista.IdLista, lista.Nome.ToUpper()));
+                    p.Add(string.Format("Lista {0:00} - {1}\n", lista.IdLista, lista.Nome.ToUpper()));
                     linhas.Add(string.Format("Semente de Sorteio: {0} ({1})\n\n", lista.SementeSorteio, lista.FonteSementeSorteio));
                     p.Add(string.Format("Semente de Sorteio: {0} ({1})\n\n", lista.SementeSorteio, lista.FonteSementeSorteio));
-                    document.Add(p);
 
-                    PdfPTable table = new PdfPTable(5);
-                    table.WidthPercentage = 100f;
-                    table.DefaultCell.HorizontalAlignment = 1;
-                    table.SetWidths(new float[] { 1f, 2f, 8f, 1f, 2f });
-                    table.HeaderRows = 1;
-
-                    table.AddCell(new PdfPCell(new Phrase("Nº", headerFont))
+                    if (lista.Candidatos.Count == 0)
                     {
-                        HorizontalAlignment = 1,
-                        BackgroundColor = BaseColor.LIGHT_GRAY
-                    });
-
-                    table.AddCell(new PdfPCell(new Phrase("CPF", headerFont))
-                    {
-                        HorizontalAlignment = 1,
-                        BackgroundColor = BaseColor.LIGHT_GRAY
-                    });
-
-                    table.AddCell(new PdfPCell(new Phrase("NOME", headerFont))
-                    {
-                        HorizontalAlignment = 1,
-                        BackgroundColor = BaseColor.LIGHT_GRAY
-                    });
-
-                    table.AddCell(new PdfPCell(new Phrase("CRIT.", headerFont))
-                    {
-                        HorizontalAlignment = 1,
-                        BackgroundColor = BaseColor.LIGHT_GRAY
-                    });
-
-                    table.AddCell(new PdfPCell(new Phrase("INSCRIÇÃO", headerFont))
-                    {
-                        HorizontalAlignment = 1,
-                        BackgroundColor = BaseColor.LIGHT_GRAY
-                    });
-
-                    linhas.Add(String.Concat("Nº   ", "CPF                 ", "NOME,", "CRITÉRIOS,", "INSCRIÇÃO"));
-
-                    foreach (CandidatoPub candidato in lista.Candidatos)
-                    {
-                        table.AddCell(string.Format("{0:000}", candidato.IdCandidato));
-                        table.AddCell(string.Format("***.{0:000'.'000}", candidato.Cpf.ToString().Substring(4, 7)) + "-**");
-                        table.AddCell(candidato.Nome.ToUpper());
-                        table.AddCell(candidato.QuantidadeCriterios.ToString());
-                        table.AddCell(string.Format("{0:000000}", candidato.IdInscricao.ToString()));
-                        linhas.Add(String.Concat(string.Format("{0:000}", candidato.IdCandidato), " ", string.Format("***.{0:000'.'000'}", candidato.Cpf.ToString().Substring(4, 7)) + "-**", " ", candidato.Nome.ToUpper(), ", ", candidato.QuantidadeCriterios.ToString(), ", ", string.Format("{0:000000}", candidato.IdInscricao.ToString())));
+                        linhas.Add("Não houveram vagas ou inscritos suficientes para esta lista");
+                        p.Add("Não houveram vagas ou inscritos suficientes para esta lista\n\n");
+                        document.Add(p);
                     }
+                    else
+                    {
+                        document.Add(p);
+                        PdfPTable table = new PdfPTable(5);
+                        table.WidthPercentage = 100f;
+                        table.DefaultCell.HorizontalAlignment = 1;
+                        table.SetWidths(new float[] { 1f, 2f, 8f, 1f, 2f });
+                        table.HeaderRows = 1;
 
-                    document.Add(table);
+                        table.AddCell(new PdfPCell(new Phrase("Nº", headerFont))
+                        {
+                            HorizontalAlignment = 1,
+                            BackgroundColor = BaseColor.LIGHT_GRAY
+                        });
+
+                        table.AddCell(new PdfPCell(new Phrase("CPF", headerFont))
+                        {
+                            HorizontalAlignment = 1,
+                            BackgroundColor = BaseColor.LIGHT_GRAY
+                        });
+
+                        table.AddCell(new PdfPCell(new Phrase("NOME", headerFont))
+                        {
+                            HorizontalAlignment = 1,
+                            BackgroundColor = BaseColor.LIGHT_GRAY
+                        });
+
+                        table.AddCell(new PdfPCell(new Phrase("CRIT.", headerFont))
+                        {
+                            HorizontalAlignment = 1,
+                            BackgroundColor = BaseColor.LIGHT_GRAY
+                        });
+
+                        table.AddCell(new PdfPCell(new Phrase("INSCRIÇÃO", headerFont))
+                        {
+                            HorizontalAlignment = 1,
+                            BackgroundColor = BaseColor.LIGHT_GRAY
+                        });
+
+                        linhas.Add(String.Concat("Nº   ", "CPF                 ", "NOME,", "CRITÉRIOS,", "INSCRIÇÃO"));
+
+                        foreach (CandidatoPub candidato in lista.Candidatos)
+                        {
+                            table.AddCell(string.Format("{0:000}", candidato.IdCandidato));
+                            table.AddCell(string.Format("***.{0:000'.'000}", candidato.Cpf.ToString().Substring(4, 7)) + "-**");
+                            table.AddCell(candidato.Nome.ToUpper());
+                            table.AddCell(candidato.QuantidadeCriterios.ToString());
+                            table.AddCell(string.Format("{0:000000}", candidato.IdInscricao.ToString()));
+                            linhas.Add(String.Concat(string.Format("{0:000}", candidato.IdCandidato), " ", string.Format("***.{0:000'.'000'}", candidato.Cpf.ToString().Substring(4, 7)) + "-**", " ", candidato.Nome.ToUpper(), ", ", candidato.QuantidadeCriterios.ToString(), ", ", string.Format("{0:000000}", candidato.IdInscricao.ToString())));
+                        }
+
+                        document.Add(table);
+                    }
                 }
                 System.Drawing.Printing.PrintDocument printer = new System.Drawing.Printing.PrintDocument();
                 printer.PrintPage += delegate (object envio, System.Drawing.Printing.PrintPageEventArgs eArgs)
@@ -139,61 +148,73 @@ namespace Habitasorte.Business.Pdf {
                     p.Font = headerFont;
                     p.Add("CASA NOVA - PREFEITURA DE SOROCABA \n");
                     p.Add("RELAÇÃO DE SORTEADOS TITULARES \n\n");
-                    document.Add(p);
 
-                    PdfPTable table = new PdfPTable(6);
-                    table.WidthPercentage = 100f;
-                    table.DefaultCell.HorizontalAlignment = 1;
-                    table.SetWidths(new float[] { 2f, 8f, 2f, 2f, 8f, 2f });
-                    table.HeaderRows = 1;
-
-                    table.AddCell(new PdfPCell(new Phrase("CPF", headerFont)) {
-                        HorizontalAlignment = 1,
-                        BackgroundColor = BaseColor.LIGHT_GRAY
-                    });
-
-                    table.AddCell(new PdfPCell(new Phrase("NOME", headerFont)) {
-                        HorizontalAlignment = 1,
-                        BackgroundColor = BaseColor.LIGHT_GRAY
-                    });
-
-                    table.AddCell(new PdfPCell(new Phrase("INSCRIÇÃO", headerFont))
+                    if (lista.Candidatos.Count == 0)
                     {
-                        HorizontalAlignment = 1,
-                        BackgroundColor = BaseColor.LIGHT_GRAY
-                    });
-                    table.AddCell(new PdfPCell(new Phrase("CPF", headerFont))
-                    {
-                        HorizontalAlignment = 1,
-                        BackgroundColor = BaseColor.LIGHT_GRAY
-                    });
-
-                    table.AddCell(new PdfPCell(new Phrase("NOME", headerFont))
-                    {
-                        HorizontalAlignment = 1,
-                        BackgroundColor = BaseColor.LIGHT_GRAY
-                    });
-
-                    table.AddCell(new PdfPCell(new Phrase("INSCRIÇÃO", headerFont))
-                    {
-                        HorizontalAlignment = 1,
-                        BackgroundColor = BaseColor.LIGHT_GRAY
-                    });
-                    
-                    foreach (CandidatoPub candidato in lista.Candidatos) {
-                        table.AddCell(new Phrase(string.Format("***.{0:000'.'000'}", candidato.Cpf.ToString().Substring(4, 7)) + "-**", headerFont));
-                        table.AddCell(new Phrase(candidato.Nome.ToUpper(), headerFont));
-                        table.AddCell(new Phrase(string.Format("{0:000000}", candidato.IdInscricao.ToString()), headerFont));
+                        p.Add("Não houveram vagas ou inscritos suficientes para esta lista\n\n");
+                        document.Add(p);
                     }
-
-                    if (lista.Candidatos.Count % 2 > 0)
+                    else
                     {
-                        table.AddCell(new Phrase(String.Empty));
-                        table.AddCell(new Phrase(String.Empty));
-                        table.AddCell(new Phrase(String.Empty));
-                    }
+                        document.Add(p);
 
-                    document.Add(table);
+                        PdfPTable table = new PdfPTable(6);
+                        table.WidthPercentage = 100f;
+                        table.DefaultCell.HorizontalAlignment = 1;
+                        table.SetWidths(new float[] { 2f, 8f, 2f, 2f, 8f, 2f });
+                        table.HeaderRows = 1;
+
+                        table.AddCell(new PdfPCell(new Phrase("CPF", headerFont))
+                        {
+                            HorizontalAlignment = 1,
+                            BackgroundColor = BaseColor.LIGHT_GRAY
+                        });
+
+                        table.AddCell(new PdfPCell(new Phrase("NOME", headerFont))
+                        {
+                            HorizontalAlignment = 1,
+                            BackgroundColor = BaseColor.LIGHT_GRAY
+                        });
+
+                        table.AddCell(new PdfPCell(new Phrase("INSCRIÇÃO", headerFont))
+                        {
+                            HorizontalAlignment = 1,
+                            BackgroundColor = BaseColor.LIGHT_GRAY
+                        });
+                        table.AddCell(new PdfPCell(new Phrase("CPF", headerFont))
+                        {
+                            HorizontalAlignment = 1,
+                            BackgroundColor = BaseColor.LIGHT_GRAY
+                        });
+
+                        table.AddCell(new PdfPCell(new Phrase("NOME", headerFont))
+                        {
+                            HorizontalAlignment = 1,
+                            BackgroundColor = BaseColor.LIGHT_GRAY
+                        });
+
+                        table.AddCell(new PdfPCell(new Phrase("INSCRIÇÃO", headerFont))
+                        {
+                            HorizontalAlignment = 1,
+                            BackgroundColor = BaseColor.LIGHT_GRAY
+                        });
+
+                        foreach (CandidatoPub candidato in lista.Candidatos)
+                        {
+                            table.AddCell(new Phrase(string.Format("***.{0:000'.'000'}", candidato.Cpf.ToString().Substring(4, 7)) + "-**", headerFont));
+                            table.AddCell(new Phrase(candidato.Nome.ToUpper(), headerFont));
+                            table.AddCell(new Phrase(string.Format("{0:000000}", candidato.IdInscricao.ToString()), headerFont));
+                        }
+
+                        if (lista.Candidatos.Count % 2 > 0)
+                        {
+                            table.AddCell(new Phrase(String.Empty));
+                            table.AddCell(new Phrase(String.Empty));
+                            table.AddCell(new Phrase(String.Empty));
+                        }
+
+                        document.Add(table);
+                    }
                 }
                 writer.Close();
             }
