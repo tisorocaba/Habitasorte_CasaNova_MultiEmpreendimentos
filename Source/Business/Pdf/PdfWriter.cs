@@ -87,7 +87,7 @@ namespace Habitasorte.Business.Pdf {
                             BackgroundColor = BaseColor.LIGHT_GRAY
                         });
 
-                        linhas.Add(String.Concat("Nº   ", "CPF                 ", "NOME,", "CRITÉRIOS,", "INSCRIÇÃO"));
+                        linhas.Add(String.Concat("Nº   ", "CPF               ", "NOME,", "CRITÉRIOS,", "INSCRIÇÃO"));
 
                         foreach (CandidatoPub candidato in lista.Candidatos)
                         {
@@ -113,8 +113,8 @@ namespace Habitasorte.Business.Pdf {
                         } else
                         {
                             eArgs.Graphics.DrawString(linhas[ix].Split(',')[0], new System.Drawing.Font("HELVETICA_BOLD", 8), new System.Drawing.SolidBrush(System.Drawing.Color.Black), new System.Drawing.RectangleF(0, ix * 15, 650, 20));
-                            eArgs.Graphics.DrawString(linhas[ix].Split(',')[1], new System.Drawing.Font("HELVETICA_BOLD", 8), new System.Drawing.SolidBrush(System.Drawing.Color.Black), new System.Drawing.RectangleF(650, ix * 15, 100, 20));
-                            eArgs.Graphics.DrawString(linhas[ix].Split(',')[2], new System.Drawing.Font("HELVETICA_BOLD", 8), new System.Drawing.SolidBrush(System.Drawing.Color.Black), new System.Drawing.RectangleF(750, ix * 15, 100, 20));
+                            eArgs.Graphics.DrawString(linhas[ix].Split(',')[1], new System.Drawing.Font("HELVETICA_BOLD", 8), new System.Drawing.SolidBrush(System.Drawing.Color.Black), new System.Drawing.RectangleF(620, ix * 15, 100, 20));
+                            eArgs.Graphics.DrawString(linhas[ix].Split(',')[2], new System.Drawing.Font("HELVETICA_BOLD", 8), new System.Drawing.SolidBrush(System.Drawing.Color.Black), new System.Drawing.RectangleF(720, ix * 15, 100, 20));
                         }
                     }
                     eArgs.Graphics.DrawString(lista.Nome, new System.Drawing.Font("HELVETICA_BOLD", 8), new System.Drawing.SolidBrush(System.Drawing.Color.Gray), new System.Drawing.RectangleF(0, 1080, 700, 20));
