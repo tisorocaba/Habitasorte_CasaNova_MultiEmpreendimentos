@@ -674,7 +674,7 @@ namespace Habitasorte {
             //lblSorteioListaAtual.Visibility = Visibility.Visible;
             //lblSorteioProximaLista.Visibility = Visibility.Hidden;
 
-            txtLogSorteio.Clear();
+            //txtLogSorteio.Clear();
         }
 
         private void buttonSortearProximaLista_Click(object sender, RoutedEventArgs e) {
@@ -721,7 +721,7 @@ namespace Habitasorte {
                     }
                     else
                     {
-                        if (!string.IsNullOrWhiteSpace(txtLogSorteio.Text))
+                        if (!string.IsNullOrWhiteSpace(txtLogSorteio.GetLineText(txtLogSorteio.GetLastVisibleLineIndex())) && txtLogSorteio.GetLineText(txtLogSorteio.GetLastVisibleLineIndex()).Contains("|"))
                         {
                             txtLogSorteio.AppendText(Environment.NewLine);
                         }
