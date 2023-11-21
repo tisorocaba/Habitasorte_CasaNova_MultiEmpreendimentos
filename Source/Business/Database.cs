@@ -384,7 +384,7 @@ namespace Habitasorte.Business
                     string nome = dataReader.GetString(dataReader.GetOrdinal("NOME_DO_RESPONSÁVEL"));
                     int qtdCriterios = Convert.ToInt32(dataReader[dataReader.GetOrdinal("TOTAL_DE_CRITÉRIOS")]);
                     bool deficiente = ConverterBooleano(dataReader[dataReader.GetOrdinal("DEFICIENTE")]);
-                    bool idoso = ConverterBooleano(dataReader[dataReader.GetOrdinal("RESPONSÁVEL_E_OU__CÔNJUGE_IDOSO_60")]);
+                    bool idoso = ConverterBooleano(dataReader[dataReader.GetOrdinal("RESPONSÁVEL_E_OU_CÔNJUGE_IDOSO__60__")]);
                     bool superIdoso = ConverterBooleano(dataReader[dataReader.GetOrdinal("RESPONSÁVEL_E_OU_CÔNJUGE_COM_80_ANOS_OU_MAIS")]);
                     int inscricao = Convert.ToInt32(dataReader[dataReader.GetOrdinal("NÚMERO_DA_INSCRIÇÃO")]);
                     int rendaBruta = Convert.ToInt32(dataReader[dataReader.GetOrdinal("FAIXA_SALARIAL")]);
@@ -1328,7 +1328,7 @@ namespace Habitasorte.Business
 
         public string ValidarCabecalho(string cabecalho)
         {
-            string[] termosCabecalho = { "CPF_DO_RESPONSÁVEL", "NOME_DO_RESPONSÁVEL", "TOTAL_DE_CRITÉRIOS", "DEFICIENTE", "RESPONSÁVEL_E_OU__CÔNJUGE_IDOSO_60", "RESPONSÁVEL_E_OU_CÔNJUGE_COM_80_ANOS_OU_MAIS", "NÚMERO_DA_INSCRIÇÃO", "FAIXA_SALARIAL" };
+            string[] termosCabecalho = { "CPF_DO_RESPONSÁVEL", "NOME_DO_RESPONSÁVEL", "TOTAL_DE_CRITÉRIOS", "DEFICIENTE", "RESPONSÁVEL_E_OU_CÔNJUGE_IDOSO__60__", "RESPONSÁVEL_E_OU_CÔNJUGE_COM_80_ANOS_OU_MAIS", "NÚMERO_DA_INSCRIÇÃO", "FAIXA_SALARIAL" };
             StringBuilder listaTermosNaoEncontrados = new StringBuilder();
 
             for(int ix=0; ix < termosCabecalho.Count(); ix++)
