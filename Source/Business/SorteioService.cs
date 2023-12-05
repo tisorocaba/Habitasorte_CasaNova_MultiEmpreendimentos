@@ -136,16 +136,6 @@ namespace Habitasorte.Business {
                 d.CriarListasSorteioPorFaixa(faixa, updateStatus, updateProgress, listaAtual, totalListas, incremento, rendaMinima, rendaMaxima);
                 AtualizarStatusSorteio(d, Status.QUANTIDADES);
             });
-            //DateTime hrAtual = DateTime.Now;
-            //DateTime tempoCommit = hrAtual.AddMinutes(1);
-            //while (DateTime.Now < tempoCommit)
-            //{
-
-            //}
-            //Execute(d => {
-            //    d.CriarListasSorteioPorFaixa(faixa, updateStatus, updateProgress, listaAtual, totalListas, incremento, rendaMinima, rendaMaxima);
-            //    AtualizarStatusSorteio(d, Status.QUANTIDADES);
-            //});
         }
 
         private IExcelDataReader CreateExcelReader(string arquivoImportacao, Stream stream) {

@@ -29,8 +29,6 @@ namespace Habitasorte.Business
             string dbFile = ConfigurationManager.AppSettings["ARQUIVO_BANCO"];
             string dbDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string dbPath = $"{dbDirectory}{dbFile}";
-            //Provider = Microsoft.ACE.OLEDB.12.0; Data Source = ExcelFilePath; Extended Properties = 'Excel 12.0;HRD=YES; IMEX=1;
-            //ConnectionString = $"DataSource=\"{dbPath}\";Max Database Size=4091;Case Sensitive=False;Locale Identifier=1046;";
 
             SQLiteConnectionStringBuilder stringConexao = new SQLiteConnectionStringBuilder();
             stringConexao.DataSource = dbPath;
@@ -71,30 +69,6 @@ namespace Habitasorte.Business
                     }
                 }
             }
-
-            //if (!File.Exists(dbPath)) {
-            //    using (SqlCeEngine engine = new SqlCeEngine(ConnectionString)) {
-            //        engine.CreateDatabase();
-            //    }
-            //    string scriptFile = ConfigurationManager.AppSettings["ARQUIVO_SCRIPT"];
-            //    string scriptPath = $"{dbDirectory}{scriptFile}";
-            //    string scriptText;
-            //    using (StreamReader streamReader = new StreamReader(scriptPath, Encoding.UTF8)) {
-            //        scriptText = streamReader.ReadToEnd();
-            //    }
-            //    using (SqlCeConnection connection = CreateConnection()) {
-            //        foreach (string commandText in scriptText.Split(';')) {
-            //            if (!string.IsNullOrWhiteSpace(commandText)) {
-            //                using (SqlCeCommand command = new SqlCeCommand()) {
-            //                    command.Connection = connection;
-            //                    command.CommandType = CommandType.Text;
-            //                    command.CommandText = commandText;
-            //                    command.ExecuteNonQuery();
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
         }
 
         public static void ExcluirBanco()
@@ -405,182 +379,43 @@ namespace Habitasorte.Business
 
             resultSet.Close();
             command.Dispose();
-
-            //SqlCeBulkCopy bulkCopy = new SqlCeBulkCopy(Connection, Transaction);
-            //bulkCopy.DestinationTableName = "CANDIDATO";
-            //bulkCopy.ColumnMappings.Add(new SqlCeBulkCopyColumnMapping(0, "CPF"));
-            //bulkCopy.ColumnMappings.Add(new SqlCeBulkCopyColumnMapping(1, "NOME"));
-            //bulkCopy.ColumnMappings.Add(new SqlCeBulkCopyColumnMapping(2, "QUANTIDADE_CRITERIOS"));
-            //bulkCopy.ColumnMappings.Add(new SqlCeBulkCopyColumnMapping(3, "LISTA_DEFICIENTES"));
-            //bulkCopy.ColumnMappings.Add(new SqlCeBulkCopyColumnMapping(4, "LISTA_IDOSOS"));
-            //bulkCopy.ColumnMappings.Add(new SqlCeBulkCopyColumnMapping(5, "LISTA_SUPER_IDOSOS"));
-            //bulkCopy.ColumnMappings.Add(new SqlCeBulkCopyColumnMapping(6, "INSCRICAO"));
-            //bulkCopy.ColumnMappings.Add(new SqlCeBulkCopyColumnMapping(7, "RENDA_BRUTA"));
-            //bulkCopy.WriteToServer(dataReader);
         }
 
         public void CriarListasSorteioPorFaixa(string faixa, Action<string> updateStatus, Action<int> updateProgress, int listaAtual, int totalListas, int incrementoOrdem, int rendaMinima, int rendaMaxima)
         {
-
             /* Gera as listas de sorteio por grupo e faixa de renda. */
-            //int incrementoOrdem = listaAtual;
-            //int idPrimeiraLista = listaAtual;
             int idUltimaLista;
             int qtdEmpreendimentos = totalListas / 18;
-            //int ordem = (listaAtual + 2) / 3;
             int ordem = listaAtual;
-            //if (qtdEmpreendimentos == 1)
-            //{
-            //    ordem = listaAtual;
-            //}
-            //if (qtdEmpreendimentos != 1)
-            //{
-            //    ordem = (listaAtual + 2) / 3;
-            //}
+            int referencia = ((listaAtual - 1) / 3) + 1;
 
-            //if (faixa.Contains("RESERVA"))
-            //{
+            if (referencia <= qtdEmpreendimentos)
+            {
+                ordem = referencia;
+            } else
+            {
+                int[] iniciais = new int[7];
+                iniciais[0] = 1;
 
-            //    int dif = 0;
-            //    switch (qtdEmpreendimentos)
-            //    {
-            //        case 1:
-            //            dif = 20;
-            //            break;
-            //        case 2:
-            //            dif = 20;
-            //            break;
-            //        case 3:
-            //            dif = 23;
-            //            break;
-            //        case 4:
-            //            dif = 26;
-            //            break;
-            //        case 5:
-            //            dif = 29;
-            //            break;
-            //        case 6:
-            //            dif = 32;
-            //            break;
-            //    }
-            //    if (faixa.Contains("Faixa B"))
-            //    {
-            //        dif = dif + 6;
-            //    }
-            //    if (faixa.Contains("Faixa C"))
-            //    {
-            //        dif = dif + 12;
-            //    }
-            //    ordem = (listaAtual + dif) / 3;
-            //}
-
-            //if (qtdEmpreendimentos == 1)
-            //{
-            //    ordem = listaAtual;
-            //}
-
-            //if (qtdEmpreendimentos == 2) {
-            //    if (faixa.Contains("Faixa A"))
-            //    {
-            //        ordem = (listaAtual + 2) / 3;
-            //    }
-            //    else
-            //    {
-            //        if (faixa.Contains("Faixa B"))
-            //        {
-            //            ordem = (1 + listaAtual + (incrementoOrdem * 3)) / qtdEmpreendimentos;
-            //        }
-            //        else
-            //        {
-            //            if (faixa.Contains("Faixa C"))
-            //            {
-            //                ordem = (1 + listaAtual + (incrementoOrdem * 6)) / qtdEmpreendimentos;
-            //            }
-            //        }
-            //    }
-            //}
-
-            //if (qtdEmpreendimentos == 3)
-            //{
-            //    if (faixa.Contains("Faixa A"))
-            //    {
-            //        ordem = (listaAtual + 2) / 3;
-            //    }
-            //    else
-            //    {
-            //        if (faixa.Contains("Faixa B"))
-            //        {
-            //            ordem = listaAtual;
-            //        }
-            //        else
-            //        {
-            //            if (faixa.Contains("Faixa C"))
-            //            {
-            //                ordem = (1 + listaAtual + (incrementoOrdem * 6)) / qtdEmpreendimentos;
-            //            }
-            //        }
-            //    }
-            //}
-
-            //if (qtdEmpreendimentos > 1)
-            //{
-                int referencia = ((listaAtual - 1) / 3) + 1;
-                int resto = listaAtual % (qtdEmpreendimentos * 3);
-                if (referencia <= qtdEmpreendimentos)
+                for (int ix = 1; ix < iniciais.Length; ix++)
                 {
-                    ordem = referencia;
+                    iniciais[ix] = 1 + (ix * qtdEmpreendimentos * 3);
+                }
+                if (iniciais.Contains(listaAtual))
+                {
+                    ordem = listaAtual;
                 } else
                 {
-                    int[] iniciais = new int[7];
-                    iniciais[0] = 1;
-
                     for (int ix = 1; ix < iniciais.Length; ix++)
                     {
-                        iniciais[ix] = 1 + (ix * qtdEmpreendimentos * 3);
-                    }
-                    if (iniciais.Contains(listaAtual))
-                    {
-                        ordem = listaAtual;
-                    } else
-                    {
-                        for (int ix = 1; ix < iniciais.Length; ix++)
+                        if (iniciais[ix] > listaAtual)
                         {
-                            if (iniciais[ix] > listaAtual)
-                            {
-                                ordem = ((listaAtual - iniciais[ix - 1]) / 3) + iniciais[ix - 1];
-                                break;
-                            }
+                            ordem = ((listaAtual - iniciais[ix - 1]) / 3) + iniciais[ix - 1];
+                            break;
                         }
                     }
                 }
-            //}
-
-            //if (qtdEmpreendimentos > 1)
-            //{
-            //    if (faixa.Contains("RESERVA"))
-            //    {
-            //        //ordem = ordem + ((3 * 3 * qtdEmpreendimentos) - (3 * qtdEmpreendimentos));
-            //        if (faixa.Contains("Faixa A"))
-            //        {
-            //            //ordem = listaAtual;
-            //            ordem = ordem + (qtdEmpreendimentos * 2 * 3);
-            //        }
-            //        else
-            //        {
-            //            if (faixa.Contains("Faixa B"))
-            //            {
-            //                ordem = ordem + (qtdEmpreendimentos * 2 * 3) - 3;
-            //            }
-            //            else
-            //            {
-            //                if (faixa.Contains("Faixa C"))
-            //                {
-            //                    ordem = ordem + (qtdEmpreendimentos * 2 * 3) - 3;
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
+            }
 
             updateStatus($"Gerando lista {listaAtual} de {totalListas}.");
             updateProgress((int)((listaAtual / (double)totalListas) * 100));
@@ -614,7 +449,7 @@ namespace Habitasorte.Business
                 new SQLiteParameter("GRUPOFAIXA", String.Concat(nomeLista, " - ", grupoFaixa)) { DbType = DbType.String },
                 new SQLiteParameter("INCREMENTO_ORDEM", incremento) { DbType = DbType.Int32 }
             );
-            return incremento;
+            return id;
         }
 
         private int CriarListaSorteio(string empreendimento, string nomeLista, int fatorLista, int incremento, int qtdEmpreendimentos)
@@ -762,7 +597,6 @@ namespace Habitasorte.Business
 
         public Lista SortearCandidatos(Action<string> updateStatus, Action<int> updateProgress, Action<string, bool> logText, int? sementePersonalizada = null)
         {
-
             //updateStatus("Iniciando sorteio...");
 
             Lista proximaLista = CarregarProximaLista();
@@ -770,7 +604,6 @@ namespace Habitasorte.Business
             {
                 throw new Exception("Não existem listas disponíveis para sorteio.");
             }
-            //bool titular = !proximaLista.Nome.Contains("RESERVA");
             double quantidadeAtual = 0;
             double quantidadeTotal = Math.Min(proximaLista.Quantidade, (int)proximaLista.CandidatosDisponiveis);
 
@@ -1118,20 +951,21 @@ namespace Habitasorte.Business
 
         private string CompletarNome(string nome)
         {
-            int res = 0;
-            Int32.TryParse(nome.Substring(0, 4), out res);
-            if (res % 2 > 0)
-            {
-                if (nome.Count() <= 94)
-                {
-                    string espacos = "                                                                                              ";
-                    return String.Concat(nome, espacos.Substring(0, 94 - nome.Count()));
-                }
-            }
-            else
-            {
-                return String.Concat("|", nome);
-            }
+            //Tratamento de string para gerar segunda coluna de nomes sorteados
+            //int res = 0;
+            //Int32.TryParse(nome.Substring(0, 4), out res);
+            //if (res % 2 > 0)
+            //{
+            //    if (nome.Count() <= 94)
+            //    {
+            //        string espacos = "                                                                                              ";
+            //        return String.Concat(nome, espacos.Substring(0, 94 - nome.Count()));
+            //    }
+            //}
+            //else
+            //{
+            //    return String.Concat("|", nome);
+            //}
             return nome;
         }
 
