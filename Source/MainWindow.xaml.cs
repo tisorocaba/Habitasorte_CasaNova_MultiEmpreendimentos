@@ -171,8 +171,6 @@ namespace Habitasorte {
             grdIniciarSorteio.IsEnabled = VerificarStatus(Status.SORTEIO, Status.SORTEIO_INICIADO);
             grdSorteioEmAndamento.IsEnabled = false;
             lstSorteioListasSorteio.IsEnabled = true;
-            //lblSorteioListaAtual.Visibility = Visibility.Hidden;
-            //lblSorteioProximaLista.Visibility = Visibility.Visible;
             AlternarTab(tabSorteio, ativo);
         }
 
@@ -350,58 +348,6 @@ namespace Habitasorte {
             }
         }
 
-        //private void gridArquivoImportacaoFaixaB(object sender, RoutedEventArgs e)
-        //{
-        //    Microsoft.Win32.OpenFileDialog fileDialog = new Microsoft.Win32.OpenFileDialog();
-        //    fileDialog.DefaultExt = ".xlsx";
-        //    fileDialog.Filter = "Planilha Excel (*.xlsx)|*.xlsx|Planilha Excel 97-2003 (*.xls)|*.xls";
-
-        //    bool? result = fileDialog.ShowDialog();
-        //    if (result == true)
-        //    {
-        //        txtFaixaB.Text = fileDialog.FileName;
-        //    }
-        //}
-
-        //private void gridArquivoImportacaoFaixaC(object sender, RoutedEventArgs e)
-        //{
-        //    Microsoft.Win32.OpenFileDialog fileDialog = new Microsoft.Win32.OpenFileDialog();
-        //    fileDialog.DefaultExt = ".xlsx";
-        //    fileDialog.Filter = "Planilha Excel (*.xlsx)|*.xlsx|Planilha Excel 97-2003 (*.xls)|*.xls";
-
-        //    bool? result = fileDialog.ShowDialog();
-        //    if (result == true)
-        //    {
-        //        txtFaixaC.Text = fileDialog.FileName;
-        //    }
-        //}
-
-        //private void gridArquivoImportacaoFaixaD(object sender, RoutedEventArgs e)
-        //{
-        //    Microsoft.Win32.OpenFileDialog fileDialog = new Microsoft.Win32.OpenFileDialog();
-        //    fileDialog.DefaultExt = ".xlsx";
-        //    fileDialog.Filter = "Planilha Excel (*.xlsx)|*.xlsx|Planilha Excel 97-2003 (*.xls)|*.xls";
-
-        //    bool? result = fileDialog.ShowDialog();
-        //    if (result == true)
-        //    {
-        //        txtFaixaD.Text = fileDialog.FileName;
-        //    }
-        //}
-
-        //private void gridArquivoImportacaoFaixaE(object sender, RoutedEventArgs e)
-        //{
-        //    Microsoft.Win32.OpenFileDialog fileDialog = new Microsoft.Win32.OpenFileDialog();
-        //    fileDialog.DefaultExt = ".xlsx";
-        //    fileDialog.Filter = "Planilha Excel (*.xlsx)|*.xlsx|Planilha Excel 97-2003 (*.xls)|*.xls";
-
-        //    bool? result = fileDialog.ShowDialog();
-        //    if (result == true)
-        //    {
-        //        txtFaixaE.Text = fileDialog.FileName;
-        //    }
-        //}
-
         private void buttonImportarArquivosFaixas_Click(object sender, RoutedEventArgs e)
         {
 
@@ -411,10 +357,10 @@ namespace Habitasorte {
             grdImportacaoEmAndamento.IsEnabled = true;
 
             string caminhoArquivoFaixaA = txtFaixaA.Text.Contains("\\") ? txtFaixaA.Text : null;
-            string caminhoArquivoFaixaB = String.Empty;//txtFaixaB.Text.Contains("\\") ? txtFaixaB.Text : null;
-            string caminhoArquivoFaixaC = String.Empty;//txtFaixaC.Text.Contains("\\") ? txtFaixaC.Text : null;
-            string caminhoArquivoFaixaD = String.Empty;//txtFaixaD.Text.Contains("\\") ? txtFaixaD.Text : null;
-            string caminhoArquivoFaixaE = String.Empty;//txtFaixaE.Text.Contains("\\") ? txtFaixaE.Text : null;
+            string caminhoArquivoFaixaB = String.Empty;
+            string caminhoArquivoFaixaC = String.Empty;
+            string caminhoArquivoFaixaD = String.Empty;
+            string caminhoArquivoFaixaE = String.Empty;
 
             string nomeEmpreendimento1 = empreendimento1.Text;
             string nomeEmpreendimento2 = empreendimento2.Text;
@@ -613,16 +559,6 @@ namespace Habitasorte {
                         listaAtual = listaAtual + 3;
                         Service.CriarListasSorteioDeFaixas(null, NomearLista(nomeEmpreendimento6, "C RESERVA", "25", 3, 7), updateStatus, updateProgress, listaAtual, qtdListas, qtdEmpreendimentos, 3, 7);
                     }
-
-                    //Service.CriarListasSorteioDeFaixas(null, empreendimento1.Text + " - Faixa A RESERVA - 100% de Subsídio - 0 a 3 salários mínimos", updateStatus, updateProgress, 16, 30, 3, 0, 3);
-                    //Service.CriarListasSorteioDeFaixas(null, empreendimento1.Text + " - Faixa B RESERVA - 75% de Subsídio - 0 a 3 salários mínimos", updateStatus, updateProgress, 19, 30, 9, 2, 5);
-                    //Service.CriarListasSorteioDeFaixas(null, empreendimento1.Text + " - Faixa C RESERVA - 60% de Subsídio - 0 a 3 salários mínimos", updateStatus, updateProgress, 22, 30, 15, 3, 7);
-
-                    //Service.CriarListasSorteioDeFaixas(caminhoArquivoFaixaD, "Faixa D - 50% de Subsídio - 0 a 5 salários mínimos", updateStatus, updateProgress, 10, 30, 18);
-                    //Service.CriarListasSorteioDeFaixas(null, "Faixa D RESERVA - 50% de Subsídio - 0 a 5 salários mínimos", updateStatus, updateProgress, 25, 30, 21);
-                    //Service.CriarListasSorteioDeFaixas(caminhoArquivoFaixaE, "Faixa E - 25% de Subsídio - 0 a 7 salários mínimos", updateStatus, updateProgress, 13, 30, 24);
-                    //Service.CriarListasSorteioDeFaixas(null, "Faixa E RESERVA - 25% de Subsídio - 0 a 7 salários mínimos", updateStatus, updateProgress, 28, 30, 27);
-
                     updateStatus("Importação finalizada.");
                 }
                 catch (Exception exception)
@@ -670,11 +606,6 @@ namespace Habitasorte {
             grdIniciarSorteio.IsEnabled = false;
             grdSorteioEmAndamento.IsEnabled = true;
             lstSorteioListasSorteio.IsEnabled = false;
-
-            //lblSorteioListaAtual.Visibility = Visibility.Visible;
-            //lblSorteioProximaLista.Visibility = Visibility.Hidden;
-
-            //txtLogSorteio.Clear();
         }
 
         private void buttonSortearProximaLista_Click(object sender, RoutedEventArgs e) {
@@ -721,7 +652,7 @@ namespace Habitasorte {
                     }
                     else
                     {
-                        if (!string.IsNullOrWhiteSpace(txtLogSorteio.GetLineText(txtLogSorteio.GetLastVisibleLineIndex())) && txtLogSorteio.GetLineText(txtLogSorteio.GetLastVisibleLineIndex()).Contains("|"))
+                        if (!String.IsNullOrWhiteSpace(txtLogSorteio.Text))
                         {
                             txtLogSorteio.AppendText(Environment.NewLine);
                         }
